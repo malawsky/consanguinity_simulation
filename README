@@ -1,0 +1,26 @@
+The following R code was used to produce simulated genotype type given a conanguinous scheme in Arciero et al, BioRxiv. 
+
+#### how to run
+
+The input is a ped and bim file in PLINK format and a list of IID names to include in the simulation. 
+The output is a bed file in PLINK format with simulated genotypes.
+The bim file should include the genetic distance in cM. Program should only be run on one chromosome at a time.
+
+The following command is an example of how to run the simulation:
+
+consang_cous("path_to_bim","path_to_ped",n,i,"output_prefix")
+
+n is the number of simulated individual to generate (must be the appropriate multiple for a given function listed below).
+i is the chromosome number
+
+n should be a multiple of:
+2 for siblings
+5 for avuncular third generation
+4 for avuncular second generation
+3 for avuncular first generation
+8 for first cousin first second generation
+6 for first cousin first second generation
+4 for first cousin first generation
+5 for first cousin once removed
+6 for second cousins
+2 for unrelated
