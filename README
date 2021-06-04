@@ -18,9 +18,22 @@ n should be a multiple of:
 5 for avuncular third generation
 4 for avuncular second generation
 3 for avuncular first generation
-8 for first cousin first second generation
+8 for first cousin first third generation
 6 for first cousin first second generation
 4 for first cousin first generation
 5 for first cousin once removed
 6 for second cousins
 2 for unrelated
+
+finctions:
+siblings: consang_sib()
+avuncular third generation: consang_avan3rddgen()
+avuncular second generation: consang_avan2ndgen()
+avuncular first generation: consang_avan()
+first cousin first third generation: consang_cous_3gen()
+first cousin first second generation: consang_cous_2gen()
+first cousin first generation: consang_cous()
+first cousin once removed: consang_cousremoved()
+second cousins: consang_secondcous()
+unrelated: consang_outbred()
+
