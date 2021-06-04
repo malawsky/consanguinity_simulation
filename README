@@ -10,7 +10,7 @@ The following command is an example of how to run the simulation:
 
 consang_cous("path_to_bim","path_to_ped",n,i,"output_prefix")
 
-n is the number of simulated individual to generate (must be the appropriate multiple for a given function listed below).
+n is the number of simulated individual to generate (must be the appropriate multiple for a given function listed below and less than or equal to the number of samples in the bed file).
 i is the chromosome number
 
 n should be a multiple of:
