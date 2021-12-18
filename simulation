@@ -3,7 +3,7 @@ library(tidyr)
 library(genio)
 library(stringr)
 
-### individuals with unrealted parents
+### individuals with unrelated parents
 consang_outbred <- function(map,ped,nn,chr,output){
   
   geneticmap <- read.table(map)
