@@ -1,7 +1,7 @@
-library(data.table)
-library(tidyr)
-library(genio)
-library(stringr)
+require(data.table)
+require(tidyr)
+require(genio)
+require(stringr)
 
 ### individuals with unrelated parents
 consang_outbred <- function(map,ped,nn,chr,output){
