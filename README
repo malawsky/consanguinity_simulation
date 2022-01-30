@@ -1,4 +1,5 @@
-The following R code was used to produce simulated genotype data given a consanguinous scheme in Arciero et al, Nature Communications. 
+The following R code was used to produce simulated genotype data given a consanguinous scheme in Arciero et al, Nature Communication: https://www.nature.com/articles/s41467-021-27394-2#Sec27.
+
 
 #### how to run
 
@@ -14,16 +15,16 @@ n is the number of simulated individual to generate (must be the appropriate mul
 i is the chromosome number
 
 n should be a multiple of:
-2 for siblings
-5 for avuncular third generation
-4 for avuncular second generation
-3 for avuncular first generation
-8 for first cousin first second generation
-6 for first cousin first second generation
-4 for first cousin first generation
-5 for first cousin once removed
-6 for second cousins
-2 for unrelated
+2 for siblings consang_sib()
+5 for avuncular third generation consang_avan3rddgen()
+4 for avuncular second generation consang_avan2nddgen()
+3 for avuncular first generation consang_avan()
+8 for first cousin first third generation consang_cous_3gen()
+6 for first cousin first second generation consang_cous_2gen()
+4 for first cousin first generation consang_cous()
+5 for first cousin once removed consang_cousremoved()
+6 for second cousins consang_secondcous()
+2 for unrelated consang_outbred()
 
 Following running the simulations, we recommend the following steps:
 
