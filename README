@@ -31,7 +31,7 @@ Following running the simulations, we recommend the following steps:
 1. Call ROHs using PLINK and convert base position to genetic distance
 2. For each simulated individual gather 16 statistics, the number of ROHs an individual has in bins of 10 cM starting at a minimumm of 10 cM up to 150 cM, e.g 10-20,20-30,...,140-150 and label the 
 data with the appropriate parental realtedness cateogry.
-3. Use the package nnet in R to train a neural net:
+3. Use the package nnet in R to train a neural network:
 mynn <- nnet(parental_relatedness ~ ., data=trainset,
   size=25, decay=1.0e-5, maxit=500000,trace=F)
   where trainset has 17 columns, the 16 statistics and a parental_relatedness category with the parental relatedness scheme used to simulate each individual.
