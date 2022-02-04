@@ -35,6 +35,7 @@ data with the appropriate parental realtedness cateogry.
 mynn <- nnet(parental_relatedness ~ ., data=trainset,
   size=25, decay=1.0e-5, maxit=500000,trace=F)
   where trainset has 17 columns, the 16 statistics and a parental_relatedness category with the parental relatedness scheme used to simulate each individual.
+  We have found that multilayer architectures don't enhance performance, but if you find an implementation that improves on the accuracy we report, please email me!
 4. Follow the same steps for your real data, and use the trained model to predict the parental relatedness for each individual:
 prediction <- predict(mynn, actual_data, type="raw")
 5. Repeat the training and prediction steps ten times or more, sum up the matrices, and choose for each individual the parental realtedness category with the largest sum.
