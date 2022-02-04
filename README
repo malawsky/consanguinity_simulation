@@ -1,7 +1,7 @@
 The following R code was used to produce simulated genotype data given a consanguineous scheme in Arciero et al, Nature Communications: https://www.nature.com/articles/s41467-021-27394-2#Sec27.
 
 
-#### how to run
+#### Input and output
 
 input:
 The input is a ped and bim file in PLINK format. 
@@ -10,7 +10,7 @@ The bim file should include the genetic distance in cM. Program should only be r
 output:
 The output is a bed file in PLINK format with simulated genotypes for a given consanguineous scheme.
 
-###running the code 
+### Instructions
 
 Run the code in the R script file simulation.R 
 
@@ -32,13 +32,13 @@ n should be a multiple of:
 6 for second cousins consang_secondcous()
 2 for unrelated consang_outbred()
 
-####Tips
+#### Tips
 
 1. Remember to split up the file into chromosomes!
 2. Only include unrelated individuals from your dataset for the simulations (you can include everyone for the prediction step).
 3. Don't load a lot of samples into R. Using ~500 individuals for each category is sufficient for model training.
 
-###Following running the simulations, we recommend the following steps:
+### Following running the simulations, we recommend the following steps:
 
 1. Call ROHs using PLINK and convert base position to genetic distance 
 2. For each simulated individual gather 16 statistics, the number of ROHs an individual has in bins of 10 cM starting at a minimumm of 10 cM up to 150 cM, e.g 10-20,20-30,...,140-150 and label the 
