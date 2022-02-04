@@ -3,6 +3,45 @@ require(tidyr)
 require(genio)
 require(stringr)
 
+#### useful functions
+
+ ## recombination function, given an individual geno and position i the columns will be flipped after position i
+  recombine <- function(i,geno){
+    data1 <- geno[1:i,]
+    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
+    colnames(data1) <- c("V1","V2")
+    data2 <- geno[(i+1):dim(small_ped)[1],]
+    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
+    colnames(fliped) <- c("V1","V2")
+    final <-  rbind.data.frame(data1,fliped)
+    return(final)
+  }
+  
+  ## modelling multiple recombinations, calculate probability of flip between genetic positions using genetic map, model recombination loci 
+  ##using binomial distribution, create vector with positions i to flip and then use recombination function to recombine at a given position
+  multirec <- function(geno){
+    difference <- diff(geneticmap$V3)*.01
+    flips <- rbinom(length(difference),1,difference)
+    vectorflips <- match(c(1),flips)
+    data <- geno
+    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
+    colnames(data) <- c("V1","V2")
+    if (!is.na(vectorflips)) {
+      for (i in vectorflips) {
+        data <- recombine(i,data)
+      }
+    }
+    return(data)
+  }
+  
+  ## randomly select a single gamete from a recombination event
+  randomchrom <- function(df) {
+    return(as.data.frame(df[, sample(2, 1)]))
+  }
+
+
+#### consanguinity functions
+
 ### individuals with unrelated parents
 consang_outbred <- function(map,ped,nn,chr,output){
   
@@ -25,38 +64,6 @@ consang_outbred <- function(map,ped,nn,chr,output){
   
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
   
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    
-    return(data)
-  }
-  
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
-  
-  #### make siblings and unrelated
   
   recomb1_2 <- lapply(1:dim(small_ped)[2], function(i) multirec(splitgeno[[i]]))
   
@@ -83,7 +90,6 @@ consang_outbred <- function(map,ped,nn,chr,output){
   for (i in 1:nn) {
     relist[[i]] <- as.data.frame(firstbreed[,c(odd[i],even[i])])
   }
-  
   
   consang <- lapply(1:length(relist), function(i) apply(relist[[i]], 1, paste, collapse=" "))
   consangdf <- do.call("cbind.data.frame", consang)
@@ -136,37 +142,7 @@ consang_secondcous <- function(map,ped,nn,chr,output){
   colsplit <- lapply(1:nn, function(i) as.data.frame(small_ped[,i]))
   
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
-  
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    return(data)
-  }
-  
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
-  
+
   #### make siblings and unrelated
   
   recomb1_2 <- lapply(1:dim(small_ped)[2], function(i) multirec(splitgeno[[i]]))
@@ -321,36 +297,7 @@ consang_cousremoved <- function(map,ped,nn,chr,output){
   colsplit <- lapply(1:nn, function(i) as.data.frame(small_ped[,i]))
   
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
-  
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    return(data)
-  }
-  
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
+ 
   
   #### make siblings and unrelated
   
@@ -514,36 +461,6 @@ consang_avan3rddgen <- function(map,ped,nn,chr,output){
   colsplit <- lapply(1:nn, function(i) as.data.frame(small_ped[,i]))
   
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
-  
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    return(data)
-  }
-  
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
   
   #### make siblings and unrelated
   
@@ -770,36 +687,6 @@ consang_avan2ndgen <- function(map,ped,nn,chr,output){
   
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
   
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    return(data)
-  }
-  
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
-  
   #### make siblings and unrelated
   
   recomb1_2 <- lapply(1:dim(small_ped)[2], function(i) multirec(splitgeno[[i]]))
@@ -985,36 +872,6 @@ consang_avan <- function(map,ped,nn,chr,output){
   
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
   
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    return(data)
-  }
-  
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
-  
   #### make siblings and unrelated
   
   recomb1_2 <- lapply(1:dim(small_ped)[2], function(i) multirec(splitgeno[[i]]))
@@ -1070,7 +927,6 @@ consang_avan <- function(map,ped,nn,chr,output){
   
   
   firstbreed <- df[,reorder]
-  
   
   relist <- list()
   odd <- seq(1,nn*2-1,2)
@@ -1154,36 +1010,6 @@ consang_cous_3gen <- function(map,ped,nn,chr,output){
   colsplit <- lapply(1:nn, function(i) as.data.frame(small_ped[,i]))
   
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
-  
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    return(data)
-  }
-  
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
   
   #### make siblings and unrelated
   
@@ -1293,9 +1119,6 @@ consang_cous_3gen <- function(map,ped,nn,chr,output){
     relist[[i]] <- as.data.frame(firstbreed[,c(odd[i],even[i])])
   }
   
-  
-  
-  
   recomb1_2 <- lapply(1:dim(small_ped)[2], function(i) multirec(relist[[i]]))
   
   recomb1_1 <- lapply(recomb1_2, function(i) randomchrom(i))
@@ -1370,36 +1193,6 @@ consang_cous_2gen <- function(map,ped,nn,chr,output){
   colsplit <- lapply(1:nn, function(i) as.data.frame(small_ped[,i]))
   
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
-  
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    return(data)
-  }
-  
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
   
   #### make siblings and unrelated
   
@@ -1558,36 +1351,6 @@ consang_cous <- function(map,ped,nn,chr,output){
   
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
   
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    return(data)
-  }
-  
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
-  
   #### make siblings and unrelated
   
   recomb1_2 <- lapply(1:dim(small_ped)[2], function(i) multirec(splitgeno[[i]]))
@@ -1721,40 +1484,6 @@ consang_sib <- function(map,ped,nn,chr,output){
   
   ## split each individual into a dataframe with two columns, one for each haplotype
   splitgeno <- lapply(1:dim(small_ped)[2], function(i) str_split_fixed(colsplit[[i]][,1], " ", 2))
-  
-  ## recombination function, given an individual geno and position i the columns will be flipped after position i
-  recombine <- function(i,geno){
-    data1 <- geno[1:i,]
-    data1 <- cbind.data.frame(as.character(data1[,1]),as.character(data1[,2]))
-    colnames(data1) <- c("V1","V2")
-    data2 <- geno[(i+1):dim(small_ped)[1],]
-    fliped <- cbind.data.frame(as.character(data2[,2]),as.character(data2[,1]))
-    colnames(fliped) <- c("V1","V2")
-    final <-  rbind.data.frame(data1,fliped)
-    return(final)
-  }
-  
-  ## modelling multiple recombinations, calculate probability of flip between genetic positions using genetic map, model recombination loci 
-  ##using binomial distribution, create vector with positions i to flip and then use recombination function to recombine at a given position
-  multirec <- function(geno){
-    difference <- diff(geneticmap$V3)*.01
-    flips <- rbinom(length(difference),1,difference)
-    vectorflips <- match(c(1),flips)
-    data <- geno
-    data <- cbind.data.frame(as.character(data[,1]),as.character(data[,2]))
-    colnames(data) <- c("V1","V2")
-    if (!is.na(vectorflips)) {
-      for (i in vectorflips) {
-        data <- recombine(i,data)
-      }
-    }
-    return(data)
-  }
-  
-  ## randomly select a single gamete from a recombination event
-  randomchrom <- function(df) {
-    return(as.data.frame(df[, sample(2, 1)]))
-  }
   
   ## recombine individuals and randomly choose a gamete 
   
