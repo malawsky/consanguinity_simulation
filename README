@@ -7,6 +7,8 @@ The input is a ped and bim file in PLINK format.
 The output is a bed file in PLINK format with simulated genotypes.
 The bim file should include the genetic distance in cM. Program should only be run on one chromosome at a time.
 
+Run the code in the R script file.
+
 The following command is an example of how to run the simulation:
 
 consang_cous("path_to_bim","path_to_ped",n,i,"output_prefix")
