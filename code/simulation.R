@@ -39,6 +39,29 @@ require(stringr)
     return(as.data.frame(df[, sample(2, 1)]))
   }
 
+## convert to genotypes numeric 
+genonum <-  function(data) {
+  data <- data
+  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
+  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
+  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
+  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
+  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
+  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
+  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)}))
+           return(data)}
+
+
+
 
 #### consanguinity functions
 
@@ -95,24 +118,7 @@ consang_outbred <- function(map,ped,nn,chr,output){
   consangdf <- do.call("cbind.data.frame", consang)
   colnames(consangdf) <- paste0('sample',1:nn)
   
-  data <- consangdf
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
-  
+  data <- genonum(consangdf)
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
   
   colnames(geneticmap) <- c('chr','id','posg','pos','ref','alt')
@@ -251,23 +257,7 @@ consang_secondcous <- function(map,ped,nn,chr,output){
   consangdf <- do.call("cbind.data.frame", consang)
   colnames(consangdf) <- paste0('sample',1:nn)
   
-  data <- consangdf
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
+  data <- genonum(consangdf)
   
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
   colnames(geneticmap) <- c('chr','id','posg','pos','ref','alt')
@@ -415,23 +405,7 @@ consang_cousremoved <- function(map,ped,nn,chr,output){
   consangdf <- do.call("cbind.data.frame", consang)
   colnames(consangdf) <- paste0('sample',1:nn)
   
-  data <- consangdf
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
+  data <- genonum(consangdf)
   
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
   colnames(geneticmap) <- c('chr','id','posg','pos','ref','alt')
@@ -639,24 +613,8 @@ consang_avan3rddgen <- function(map,ped,nn,chr,output){
   consang <- lapply(1:length(relist2), function(i) apply(relist2[[i]], 1, paste, collapse=" "))
   consangdf <- do.call("cbind.data.frame", consang)
   colnames(consangdf) <- paste0('sample',1:nn)
-  
-  data <- consangdf
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
+                    
+  data <- genonum(consangdf)
   
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
   colnames(geneticmap) <- c('chr','id','posg','pos','ref','alt')
@@ -825,23 +783,7 @@ consang_avan2ndgen <- function(map,ped,nn,chr,output){
   consangdf <- do.call("cbind.data.frame", consang)
   colnames(consangdf) <- paste0('sample',1:nn)
   
-  data <- consangdf
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
+  data <- genonum(consangdf)
   
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
   colnames(geneticmap) <- c('chr','id','posg','pos','ref','alt')
@@ -963,23 +905,7 @@ consang_avan <- function(map,ped,nn,chr,output){
   consangdf <- do.call("cbind.data.frame", consang)
   colnames(consangdf) <- paste0('sample',1:nn)
   
-  data <- consangdf
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
+  data <- genonum(consangdf)
   
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
   colnames(geneticmap) <- c('chr','id','posg','pos','ref','alt')
@@ -1147,23 +1073,7 @@ consang_cous_3gen <- function(map,ped,nn,chr,output){
   consangdf <- do.call("cbind.data.frame", consang)
   colnames(consangdf) <- paste0('sample',1:nn)
   
-  data <- consangdf
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
+  data <- genonum(consangdf)
   
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
   colnames(geneticmap) <- c('chr','id','posg','pos','ref','alt')
@@ -1304,23 +1214,7 @@ consang_cous_2gen <- function(map,ped,nn,chr,output){
   consangdf <- do.call("cbind.data.frame", consang)
   colnames(consangdf) <- paste0('sample',1:nn)
   
-  data <- consangdf
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
+  data <- genonum(consangdf)
   
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
   colnames(geneticmap) <- c('chr','id','posg','pos','ref','alt')
@@ -1435,23 +1329,7 @@ consang_cous <- function(map,ped,nn,chr,output){
   consangdf <- do.call("cbind.data.frame", consang)
   colnames(consangdf) <- paste0('sample',1:nn)
   
-  data <- consangdf
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
+  data <- genonum(consangdf)
   
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
   colnames(geneticmap) <- c('chr','id','posg','pos','ref','alt')
@@ -1549,23 +1427,7 @@ consang_sib <- function(map,ped,nn,chr,output){
   colnames(df11) <- paste0('sample',1:nn)
   
   ### recode as homosygous 0,2 or hetero 1
-  data <- df11
-  data <- data.frame(lapply(data, function(x) {gsub("G C", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G G", "0", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("C C", "2", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("G T", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T G", "1", x)}))
-  data <- data.frame(lapply(data, function(x) {gsub("T T", "2", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("T C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("G A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A C", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A G", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("A A", "0", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C A", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C T", "1", x)})) 
-  data <- data.frame(lapply(data, function(x) {gsub("C G", "1", x)})) 
+  data <- genonum(consangdf)
   
   ### write out as plink file of simualted individuals
   data[] <- lapply(data, function (i) as.numeric(as.character(i)))
