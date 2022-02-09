@@ -1,4 +1,4 @@
-The following R code was used to produce simulated genotype data given a consanguineous scheme in Arciero et al, 
+The following  code was used to produce simulated genotype data given a consanguineous scheme in Arciero et al, 
 Nature Communications: https://www.nature.com/articles/s41467-021-27394-2#Sec27.
 
 Note that this code produces simulated genotypes for individuals with different degrees of parental relatedness which can be used for purposes other than the methods in this paper. 
